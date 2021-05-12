@@ -56,8 +56,6 @@ static int zend_cloname_startup(zend_extension *ze) {
     zend_cloname_resource = zend_get_resource_handle(ze);
 #endif
 
-    ze->handle = 0;
-
     return SUCCESS;
 }
 
@@ -95,8 +93,7 @@ static void zend_cloname_link(zend_op_array *ops) {
         closureName = zend_strpprintf(0, 
             "Closure@%s::%s:%s#%d-%d",
             ZSTR_VAL(parent->scope->name),
-            parent->function_name ? 
-                ZSTR_VAL(parent->function_name) : "{main}",
+            ZSTR_VAL(parent->function_name),
             ZSTR_VAL(ops->filename),
             ops->line_start,
             ops->line_end);
@@ -115,7 +112,7 @@ static void zend_cloname_link(zend_op_array *ops) {
     ops->reserved[zend_cloname_resource] = 
         zend_new_interned_string(closureName);
         
-    php_printf("%s\n", ZSTR_VAL(closureName));
+    zend_printf("%s\n", ZSTR_VAL(closureName));
     
     /* free the non-interned string */
     zend_string_release(closureName);
